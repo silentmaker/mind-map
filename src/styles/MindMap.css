@@ -5,9 +5,12 @@
   right: 0;
   bottom: 0;
 }
-.links line {
+#links line {
   stroke: #aaa;
 }
-.nodes circle {
+#nodes rect {
+  stroke: #666;
+  stroke-width: 1px;
+  fill: #aaa;
   pointer-events: all;
 }
