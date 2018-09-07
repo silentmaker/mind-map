@@ -5,9 +5,10 @@ class MindMap {
     const container = D3.select(selector)
     const width = container.property('clientWidth')
     const height = container.property('clientHeight')
+    const uid = (type) => `${type || 'uid'}-${new Date().getTime()}`
 
     container.append("svg:svg")
-      .attr('id', new Date().getTime())
+      .attr('id', uid('svg'))
       .attr("width", width)
       .attr("height", height);
 
@@ -25,17 +26,15 @@ class MindMap {
         {source: 1, target: 4},
       ]
     }
+    this.uid = uid
     this.svg = container.select('svg')
     this.simulation = D3.forceSimulation()
       .force("link", D3.forceLink().distance(200).id(data => data.id))
       .force('charge', D3.forceManyBody().strength(-200))
-      .force('center', D3.forceCenter(width/2, height/2))
+      .force('center', D3.forceCenter(width/2 - 50, height/2 - 20))
     this.linesGroup = this.svg.append("g").attr("id", "links")
     this.nodesGroup = this.svg.append('g').attr("id", "nodes")
     this.update()
-  }
-  uid() {
-    return new Date().getTime()
   }
   dragStart(data, simulation) {
     if (!D3.event.active) simulation.alphaTarget(0.3).restart();
@@ -52,7 +51,7 @@ class MindMap {
     data.fy = null;
   }
   add(data, content) {
-    const id = this.uid()
+    const id = this.uid('node')
     this.data.nodes.push({id, content})
     this.data.links.push({source: data.id, target: id})
     this.update()
@@ -71,7 +70,7 @@ class MindMap {
       .attr('height', 40)
       .attr('rx', 4)
       .attr('ry', 4)
-      .on('click', (data) => this.add(data, window.prompt('test')))
+      .on('click', (data) => this.add(data, window.prompt('content')))
       .call(
         D3.drag()
           .on('start', data => this.dragStart(data, this.simulation))
