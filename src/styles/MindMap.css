@@ -1,9 +1,9 @@
 #MindMap {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 50px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
 }
 #links line {
   stroke: #aaa;

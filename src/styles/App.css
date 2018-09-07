@@ -1,0 +1,15 @@
+.Button {
+  display: inline-block;
+  padding: 0 20px;
+  height: 32px;
+  line-height: 32px;
+  background-color: #fff;
+  color: #666;
+  font-size: 16px;
+  cursor: pointer;
+  border: solid 1px #eee;
+  border-radius: 4px;
+}
+.Button:active {
+  background-color: #eee;
+}

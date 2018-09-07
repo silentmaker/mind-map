@@ -11,21 +11,10 @@ class MindMap {
       .attr('id', uid('svg'))
       .attr("width", width)
       .attr("height", height);
-
-    // this.data = data || {nodes: [], links: []}
-    this.data = {
-      nodes: [
-        {id: 1, content: 'Colors'},
-        {id: 2, content: 'Red'},
-        {id: 3, content: 'Blue'},
-        {id: 4, content: 'White'}
-      ],
-      links: [
-        {source: 1, target: 2},
-        {source: 1, target: 3},
-        {source: 1, target: 4},
-      ]
-    }
+    this.data = data || ({
+      nodes: [{id: uid('node'), content: 'root'}],
+      links: []
+    })
     this.uid = uid
     this.svg = container.select('svg')
     this.simulation = D3.forceSimulation()
