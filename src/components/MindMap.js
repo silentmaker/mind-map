@@ -50,11 +50,25 @@ class MindMap {
     data.fx = null;
     data.fy = null;
   }
-  add(data, content) {
-    const id = this.uid('node')
-    this.data.nodes.push({id, content})
-    this.data.links.push({source: data.id, target: id})
-    this.update()
+  add(data) {
+    const content = window.prompt('content')
+
+    if (content && content.trim()) {
+      const id = this.uid('node')
+      this.data.nodes.push({id, content: content.trim()})
+      this.data.links.push({source: data.id, target: id})
+      this.update()
+    }
+  }
+  edit(node) {
+    const content = window.prompt('content')
+
+    if (content && content.trim()) {
+      node.content = content
+    }
+  }
+  remove(data) {
+    console.log('remove')
   }
   update() {
     const {nodes, links} = this.data
@@ -62,21 +76,40 @@ class MindMap {
       .selectAll('line')
       .data(links)
     let nodesData = this.nodesGroup
-      .selectAll('rect')
+      .selectAll('g')
       .data(nodes)
     const linesDataEnter = linesData.enter().append('line')
-    const nodesDataEnter = nodesData.enter().append('rect')
-      .attr('width', 100)
-      .attr('height', 40)
-      .attr('rx', 4)
-      .attr('ry', 4)
-      .on('click', (data) => this.add(data, window.prompt('content')))
+    const nodesDataEnter = nodesData.enter().append('g')
+      .attr('class', 'node')
+      .on('click', (data) => {
+        D3.event.stopPropagation()
+        this.edit(data)
+      })
       .call(
         D3.drag()
           .on('start', data => this.dragStart(data, this.simulation))
           .on('drag', data => this.dragging(data))
           .on('end', data => this.dragEnd(data, this.simulation))
       )
+
+    nodesDataEnter.append('rect')
+      .attr('width', 100)
+      .attr('height', 40)
+      .attr('rx', 4)
+      .attr('ry', 4)
+
+    nodesDataEnter.append('text')
+      .attr('x', 10)
+      .attr('y', 26)
+
+    nodesDataEnter.append('circle')
+      .attr('r', 10)
+      .attr('cx', 100)
+      .attr('cy', 20)
+      .on('click', (data) => {
+        D3.event.stopPropagation()
+        this.add(data)
+      })
 
     linesData.exit().remove()
     nodesData.exit().remove()
@@ -88,7 +121,9 @@ class MindMap {
         .attr('y1', data => Math.round(data.source.y + 20))
         .attr('x2', data => Math.round(data.target.x + 50))
         .attr('y2', data => Math.round(data.target.y + 10))
+
       nodesData.attr('transform', data => `translate(${Math.round(data.x)}, ${Math.round(data.y)})`)
+      nodesData.selectAll('text').text(data => data.content)
     }
 
     this.simulation.nodes(nodes).on('tick', ticked)

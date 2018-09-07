@@ -8,9 +8,23 @@
 #links line {
   stroke: #aaa;
 }
-#nodes rect {
+.node rect {
   stroke: #666;
   stroke-width: 1px;
-  fill: #aaa;
+  fill: #efefef;
   pointer-events: all;
+}
+.node text {
+  font-size: 16px;
+  fill: #666;
+}
+.node circle {
+  opacity: 0;
+  fill: #fff;
+  stroke: #666;
+  stroke-width: 1px;
+}
+.node:hover circle {
+  opacity: 1;
+  cursor: pointer;
 }
