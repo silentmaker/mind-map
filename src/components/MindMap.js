@@ -11,7 +11,7 @@ class MindMap {
       .attr('id', uid('svg'))
       .attr("width", width)
       .attr("height", height);
-    this.data = data || ({
+    this.data = data || JSON.parse(localStorage.getItem('mindMapData')) || ({
       nodes: [{id: uid('node'), content: 'root'}],
       links: []
     })
@@ -47,6 +47,7 @@ class MindMap {
       this.data.nodes.push({id, content: content.trim()})
       this.data.links.push({source: data.id, target: id})
       this.update()
+      this.save()
     }
   }
   edit(node) {
@@ -54,6 +55,7 @@ class MindMap {
 
     if (content && content.trim()) {
       node.content = content
+      this.save()
     }
   }
   remove(data) {
@@ -119,6 +121,13 @@ class MindMap {
     this.simulation.force('link').links(links)
     this.simulation.restart()
     this.simulation.alpha(1)
+  }
+  save() {
+    const data = {
+      nodes: this.data.nodes,
+      links: this.data.links.map(item => ({source: item.source.id, target: item.target.id}))
+    }
+    localStorage.setItem('mindMapData', JSON.stringify(data))
   }
 }
 
