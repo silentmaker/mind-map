@@ -6,25 +6,24 @@ import deleteImage from '../images/delete.svg'
 class MindMap {
   constructor(selector, data) {
     const container = D3.select(selector)
-    const width = container.property('clientWidth')
-    const height = container.property('clientHeight')
-    const uid = (type) => `${type || 'uid'}-${new Date().getTime()}`
 
+    this.width = container.property('clientWidth')
+    this.height = container.property('clientHeight')
+    this.uid = (type) => `${type || 'uid'}-${new Date().getTime()}`
     container.append("svg:svg")
-      .attr('id', uid('svg'))
-      .attr("width", width)
-      .attr("height", height);
+      .attr('id', this.uid('svg'))
+      .attr("width", this.width)
+      .attr("height", this.height);
     this.data = data || JSON.parse(localStorage.getItem('mindMapData')) || ({
-      nodes: [{id: uid('node'), content: 'root'}],
+      nodes: [{id: this.uid('node'), content: 'root', level: 0}],
       links: []
     })
-    this.uid = uid
     this.svg = container.select('svg')
     this.simulation = D3.forceSimulation()
       .force("link", D3.forceLink().distance(140).id(data => data.id))
-      .force('charge', D3.forceManyBody().strength(-200))
-      .force('center', D3.forceCenter(width/2 - 50, height/2 - 20))
-      .force('collide', D3.forceCollide().radius(50))
+      .force('charge', D3.forceManyBody().strength(0))
+      .force('center', D3.forceCenter(this.width/2 - 50, this.height/2 - 20))
+      .force('collide', D3.forceCollide().radius(60))
     this.linesGroup = this.svg.append("g").attr("id", "links")
     this.nodesGroup = this.svg.append('g').attr("id", "nodes")
     this.update()
@@ -48,7 +47,7 @@ class MindMap {
 
     if (content && content.trim()) {
       const id = this.uid('node')
-      this.data.nodes.push({id, content: content.trim()})
+      this.data.nodes.push({id, content: content.trim(), level: data.level + 1})
       this.data.links.push({source: data.id, target: id})
       this.update()
       this.save()
@@ -63,7 +62,13 @@ class MindMap {
     }
   }
   remove(data) {
-    console.log(data)
+    // const nodeIndex = this.data.nodes.findIndex(node => node.id === data.id)
+    const linkTarget = this.data.links.findIndex(link => link.target.id === data.id)
+
+    // this.data.nodes.splice(nodeIndex, 1)
+    linkTarget >= 0 && this.data.links.splice(linkTarget, 1)
+    // linkSource >= 0 && this.data.links.splice(linkSource, 1)
+    this.update()
   }
   update() {
     const {nodes, links} = this.data
@@ -125,12 +130,11 @@ class MindMap {
       .attr('rx', 4)
       .attr('ry', 4)
     // Node Text
-    const textsEnter = nodesDataEnter.append('g')
-    textsEnter.append('text')
+    nodesDataEnter.append('text')
       .attr('x', 10)
       .attr('y', 26)
     // Node Title
-    textsEnter.append('title')
+    nodesDataEnter.append('title')
 
     linesData.exit().remove()
     nodesData.exit().remove()
@@ -142,8 +146,8 @@ class MindMap {
         .attr('y1', data => Math.round(data.source.y + 20))
         .attr('x2', data => Math.round(data.target.x + 50))
         .attr('y2', data => Math.round(data.target.y + 10))
-
       nodesData.attr('transform', data => `translate(${Math.round(data.x)}, ${Math.round(data.y)})`)
+      nodesData.selectAll('title').text(data => data.content)
       nodesData.selectAll('text').each(function(data) {
         const el = D3.select(this)
         if (el.node().getComputedTextLength() < 80) {
@@ -152,11 +156,11 @@ class MindMap {
           el.text(data.content.substring(0, el.text().length - 1) + '\u2026')
         }
       })
-      nodesData.selectAll('title').text(data => data.content)
     }
 
     this.simulation.nodes(nodes).on('tick', ticked)
     this.simulation.force('link').links(links)
+    this.simulation.nodes(nodes)
     this.simulation.restart()
     this.simulation.alpha(1)
   }
