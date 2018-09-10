@@ -62,12 +62,16 @@ class MindMap {
     }
   }
   remove(data) {
-    // const nodeIndex = this.data.nodes.findIndex(node => node.id === data.id)
+    const nodeIndex = this.data.nodes.findIndex(node => node.id === data.id)
     const linkTarget = this.data.links.findIndex(link => link.target.id === data.id)
+    const newSource = this.data.links[linkTarget].source
 
-    // this.data.nodes.splice(nodeIndex, 1)
-    linkTarget >= 0 && this.data.links.splice(linkTarget, 1)
-    // linkSource >= 0 && this.data.links.splice(linkSource, 1)
+    this.data.nodes.splice(nodeIndex, 1)
+    this.data.links = this.data.links.map(link => {
+      if (link.source.id === data.id) link.source = newSource
+      return link
+    })
+    this.data.links.splice(linkTarget, 1)
     this.update()
   }
   update() {
@@ -93,8 +97,8 @@ class MindMap {
       .attr('xlink:href', plusImage)
       .attr('x', 96)
       .attr('y', 8)
-      .attr('width', 24)
-      .attr('height', 24)
+      .attr('width', 26)
+      .attr('height', 26)
       .on('click', (data) => {
         D3.event.stopPropagation()
         this.add(data)
@@ -105,8 +109,8 @@ class MindMap {
       .attr('xlink:href', editImage)
       .attr('x', 96)
       .attr('y', 8)
-      .attr('width', 24)
-      .attr('height', 24)
+      .attr('width', 26)
+      .attr('height', 26)
       .on('click', (data) => {
         D3.event.stopPropagation()
         this.edit(data)
@@ -117,8 +121,8 @@ class MindMap {
       .attr('xlink:href', deleteImage)
       .attr('x', 96)
       .attr('y', 8)
-      .attr('width', 24)
-      .attr('height', 24)
+      .attr('width', 26)
+      .attr('height', 26)
       .on('click', (data) => {
         D3.event.stopPropagation()
         this.remove(data)
@@ -142,10 +146,10 @@ class MindMap {
     nodesData = nodesDataEnter.merge(nodesData)
 
     const ticked = () => {
-      linesData.attr('x1', data => Math.round(data.source.x + 50))
+      linesData.attr('x1', data => Math.round(data.source.x + 60))
         .attr('y1', data => Math.round(data.source.y + 20))
-        .attr('x2', data => Math.round(data.target.x + 50))
-        .attr('y2', data => Math.round(data.target.y + 10))
+        .attr('x2', data => Math.round(data.target.x + 60))
+        .attr('y2', data => Math.round(data.target.y + 20))
       nodesData.attr('transform', data => `translate(${Math.round(data.x)}, ${Math.round(data.y)})`)
       nodesData.selectAll('title').text(data => data.content)
       nodesData.selectAll('text').each(function(data) {
