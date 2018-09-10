@@ -22,7 +22,7 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <div className="Button" onClick={() => this.export()}>导出</div>
+        <div className="Button" onClick={() => this.export()}>EXPORT</div>
         <div id="MindMap"></div>
       </div>
     )

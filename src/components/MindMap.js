@@ -1,4 +1,7 @@
 import * as D3 from 'd3'
+import plusImage from '../images/plus.svg'
+import editImage from '../images/edit.svg'
+import deleteImage from '../images/delete.svg'
 
 class MindMap {
   constructor(selector, data) {
@@ -18,9 +21,10 @@ class MindMap {
     this.uid = uid
     this.svg = container.select('svg')
     this.simulation = D3.forceSimulation()
-      .force("link", D3.forceLink().distance(200).id(data => data.id))
+      .force("link", D3.forceLink().distance(140).id(data => data.id))
       .force('charge', D3.forceManyBody().strength(-200))
       .force('center', D3.forceCenter(width/2 - 50, height/2 - 20))
+      .force('collide', D3.forceCollide().radius(50))
     this.linesGroup = this.svg.append("g").attr("id", "links")
     this.nodesGroup = this.svg.append('g').attr("id", "nodes")
     this.update()
@@ -59,7 +63,7 @@ class MindMap {
     }
   }
   remove(data) {
-    console.log('remove')
+    console.log(data)
   }
   update() {
     const {nodes, links} = this.data
@@ -72,35 +76,60 @@ class MindMap {
     const linesDataEnter = linesData.enter().append('line')
     const nodesDataEnter = nodesData.enter().append('g')
       .attr('class', 'node')
-      .on('click', (data) => {
-        D3.event.stopPropagation()
-        this.edit(data)
-      })
       .call(
         D3.drag()
           .on('start', data => this.dragStart(data, this.simulation))
           .on('drag', data => this.dragging(data))
           .on('end', data => this.dragEnd(data, this.simulation))
       )
-
+    // Plus Icon
+    nodesDataEnter.append('image')
+      .attr('class', 'plus')
+      .attr('xlink:href', plusImage)
+      .attr('x', 76)
+      .attr('y', 8)
+      .attr('width', 24)
+      .attr('height', 24)
+      .on('click', (data) => {
+        D3.event.stopPropagation()
+        this.add(data)
+      })
+    // Edit Icon
+    nodesDataEnter.append('image')
+      .attr('class', 'edit')
+      .attr('xlink:href', editImage)
+      .attr('x', 76)
+      .attr('y', 8)
+      .attr('width', 24)
+      .attr('height', 24)
+      .on('click', (data) => {
+        D3.event.stopPropagation()
+        this.edit(data)
+      })
+    // Delete Icon
+    nodesDataEnter.append('image')
+      .attr('class', 'delete')
+      .attr('xlink:href', deleteImage)
+      .attr('x', 76)
+      .attr('y', 8)
+      .attr('width', 24)
+      .attr('height', 24)
+      .on('click', (data) => {
+        D3.event.stopPropagation()
+        this.remove(data)
+      })
+    // Node Rect
     nodesDataEnter.append('rect')
       .attr('width', 100)
       .attr('height', 40)
       .attr('rx', 4)
       .attr('ry', 4)
-
+    // Node Text
     nodesDataEnter.append('text')
       .attr('x', 10)
       .attr('y', 26)
-
-    nodesDataEnter.append('circle')
-      .attr('r', 10)
-      .attr('cx', 100)
-      .attr('cy', 20)
-      .on('click', (data) => {
-        D3.event.stopPropagation()
-        this.add(data)
-      })
+    // Node Title
+    nodesDataEnter.append('title')
 
     linesData.exit().remove()
     nodesData.exit().remove()
@@ -114,7 +143,8 @@ class MindMap {
         .attr('y2', data => Math.round(data.target.y + 10))
 
       nodesData.attr('transform', data => `translate(${Math.round(data.x)}, ${Math.round(data.y)})`)
-      nodesData.selectAll('text').text(data => data.content)
+      nodesData.selectAll('text').text(data => data.content.substr(0, 6))
+      nodesData.selectAll('title').text(data => data.content)
     }
 
     this.simulation.nodes(nodes).on('tick', ticked)
