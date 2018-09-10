@@ -44,7 +44,7 @@ class MindMap {
     data.fy = null;
   }
   add(data) {
-    const content = window.prompt('content')
+    const content = window.prompt('Add Node')
 
     if (content && content.trim()) {
       const id = this.uid('node')
@@ -55,7 +55,7 @@ class MindMap {
     }
   }
   edit(node) {
-    const content = window.prompt('content')
+    const content = window.prompt('Edit Node', node.content)
 
     if (content && content.trim()) {
       node.content = content
@@ -86,7 +86,7 @@ class MindMap {
     nodesDataEnter.append('image')
       .attr('class', 'plus')
       .attr('xlink:href', plusImage)
-      .attr('x', 76)
+      .attr('x', 96)
       .attr('y', 8)
       .attr('width', 24)
       .attr('height', 24)
@@ -98,7 +98,7 @@ class MindMap {
     nodesDataEnter.append('image')
       .attr('class', 'edit')
       .attr('xlink:href', editImage)
-      .attr('x', 76)
+      .attr('x', 96)
       .attr('y', 8)
       .attr('width', 24)
       .attr('height', 24)
@@ -110,7 +110,7 @@ class MindMap {
     nodesDataEnter.append('image')
       .attr('class', 'delete')
       .attr('xlink:href', deleteImage)
-      .attr('x', 76)
+      .attr('x', 96)
       .attr('y', 8)
       .attr('width', 24)
       .attr('height', 24)
@@ -120,16 +120,17 @@ class MindMap {
       })
     // Node Rect
     nodesDataEnter.append('rect')
-      .attr('width', 100)
+      .attr('width', 120)
       .attr('height', 40)
       .attr('rx', 4)
       .attr('ry', 4)
     // Node Text
-    nodesDataEnter.append('text')
+    const textsEnter = nodesDataEnter.append('g')
+    textsEnter.append('text')
       .attr('x', 10)
       .attr('y', 26)
     // Node Title
-    nodesDataEnter.append('title')
+    textsEnter.append('title')
 
     linesData.exit().remove()
     nodesData.exit().remove()
@@ -143,7 +144,14 @@ class MindMap {
         .attr('y2', data => Math.round(data.target.y + 10))
 
       nodesData.attr('transform', data => `translate(${Math.round(data.x)}, ${Math.round(data.y)})`)
-      nodesData.selectAll('text').text(data => data.content.substr(0, 6))
+      nodesData.selectAll('text').each(function(data) {
+        const el = D3.select(this)
+        if (el.node().getComputedTextLength() < 80) {
+          el.text(data.content.substring(0, el.text().length + 1))
+        } else {
+          el.text(data.content.substring(0, el.text().length - 1) + '\u2026')
+        }
+      })
       nodesData.selectAll('title').text(data => data.content)
     }
 
