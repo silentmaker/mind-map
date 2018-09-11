@@ -32,7 +32,7 @@ class MindMap {
     this.zoomHanlder = D3.zoom().on("zoom", () => {
       D3.selectAll('g').attr("transform", D3.event.transform)
       this.update()
-    });
+    })
     this.zoomHanlder(this.svg)
     this.update()
   }
@@ -73,14 +73,14 @@ class MindMap {
       this.save()
     }
   }
-  remove(data, index) {
-    if (data.level > 0) {
-      const linkTarget = this.data.links.findIndex(link => link.target === data)
+  remove(node, index) {
+    if (node.level > 0) {
+      const linkTarget = this.data.links.findIndex(link => link.target.id === node.id)
       const newSource = this.data.links[linkTarget].source
-
+console.log(node)
       this.data.nodes.splice(index, 1)
       this.data.links = this.data.links.map(link => {
-        if (link.source === data) link.source = newSource
+        if (link.source.id === node.id) link.source = newSource
         return link
       })
       this.data.links.splice(linkTarget, 1)
@@ -168,8 +168,11 @@ class MindMap {
     linesData = linesDataEnter.merge(linesData)
     nodesData = nodesDataEnter.merge(nodesData)
     // Update Data
+    nodesData.select('g')
+    nodesData.select('.delete')
+    nodesData.select('.edit')
+    nodesData.select('.remove')
     nodesData.select('rect')
-    nodesData.select('image')
     nodesData.select('text')
     nodesData.select('title')
     linesData.select('line')
