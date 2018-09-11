@@ -23,12 +23,17 @@ class MindMap {
     this.svg = container.select('svg')
     this.simulation = D3.forceSimulation()
       .force("link", D3.forceLink().distance(140).id(data => data.id))
-      .force('charge', D3.forceManyBody().strength(-120))
+      .force('charge', D3.forceManyBody().strength(-60))
       .force('center', D3.forceCenter(this.width/2 - 50, this.height/2 - 20))
       .force('collide', D3.forceCollide().radius(60))
     this.linesGroup = this.svg.append("g").attr("id", "links")
     this.nodesGroup = this.svg.append('g').attr("id", "nodes")
     this.palette = Palettes.Blue
+    this.zoomHanlder = D3.zoom().on("zoom", () => {
+      D3.selectAll('g').attr("transform", D3.event.transform)
+      this.update()
+    });
+    this.zoomHanlder(this.svg)
     this.update()
   }
   dragStart(data, simulation) {
@@ -92,7 +97,7 @@ class MindMap {
     let nodesData = this.nodesGroup
       .selectAll('g')
       .data(nodes)
-    const linesDataEnter = linesData.enter().append('line')
+    const linesDataEnter = linesData.enter().append('line').attr('stroke', '#999')
     const nodesDataEnter = nodesData.enter().append('g')
       .attr('class', 'node')
       .call(
@@ -147,6 +152,7 @@ class MindMap {
     nodesDataEnter.append('text')
       .attr('x', 10)
       .attr('y', 26)
+      .attr('fill', '#fefefe')
     // Node Title
     nodesDataEnter.append('title')
 
@@ -184,6 +190,26 @@ class MindMap {
     this.simulation.nodes(nodes)
     this.simulation.restart()
     this.simulation.alpha(1)
+  }
+  export() {
+    const source = (new XMLSerializer()).serializeToString(this.svg.node())
+    const blob = new Blob([source], {type: 'image/svg+xml;charset=utf-8'})
+    const canvas = D3.select('body').append('canvas').node()
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    const context = canvas.getContext('2d')
+    const image = new Image()
+    image.onload = () => {
+      context.drawImage(image, 0, 0)
+      const pngUrl = canvas.toDataURL("image/png")
+      const downloadLink = D3.select('body').append('a').node()
+      downloadLink.href = pngUrl
+      downloadLink.download = 'mindmap'
+      downloadLink.click()
+      canvas.remove()
+      downloadLink.remove()
+    }
+    image.src = window.URL.createObjectURL(blob)
   }
   save() {
     const data = {

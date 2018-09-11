@@ -14,51 +14,43 @@ class App extends React.Component {
     super(props)
 
     this.toggleMenu = this.toggleMenu.bind(this)
-    this.exportSvg = this.exportSvg.bind(this)
+    this.exportPNG = this.exportPNG.bind(this)
     this.setPalette = this.setPalette.bind(this)
     this.colors = Object.keys(Palettes)
+    this.mindMap = null
     
     this.state = {
       palette: this.colors[0],
       isActive: false,
-      mindMap: null,
     }
   }
   componentDidMount() {
-    this.setState({
-      mindMap: new MindMap('#MindMap')
-    })
+    this.mindMap = new MindMap('#MindMap')
   }
   setPalette(color) {
     this.setState({
       palette: color
-    }, () => {
-      console.log(Palettes[color])
-      this.state.mindMap.setPalette(Palettes[color])
-    })
+    }, () => this.mindMap.setPalette(Palettes[color]))
   }
-  toggleMenu() {
+  exportPNG() {
+    this.mindMap.export()
+  }
+  toggleMenu(e) {
+    e.stopPropagation()
     this.setState({
       isActive: !this.state.isActive
     })
   }
-  exportSvg() {
-    const svg = document.querySelector('svg').outerHTML
-    const svgBlob = new Blob([svg], {type:"image/svg+xml;charset=utf-8"});
-    const svgUrl = URL.createObjectURL(svgBlob);
-    const downloadLink = document.createElement("a");
-
-    downloadLink.href = svgUrl;
-    downloadLink.download = 'mind-map';
-    downloadLink.click();
-  }
   render() {
     const {isActive, palette} = this.state
-    const {colors, toggleMenu, exportSvg, setPalette} = this
+    const {colors, toggleMenu, setPalette, exportPNG} = this
 
     return (
       <div id="App">
         <div id="MindMap"></div>
+        <div id="Mask" className={isActive ? 'Active' : ''} 
+          onClick={e => toggleMenu(e)}>
+        </div>
         <div id="Sidebar" className={isActive ? 'Active' : ''}>
           <div className="Label">Palette</div>
           <ul id="Palette">
@@ -69,13 +61,13 @@ class App extends React.Component {
               </li>
             )}
           </ul>
-          <div id="Menu" onClick={toggleMenu}>
+          <div id="Menu" onClick={e => toggleMenu(e)}>
             {isActive ?
               <img src={closeIcon} alt="close" className="Close-Icon" /> :
               <img src={menuIcon} alt="menu" className="Menu-Icon" />
             }
           </div>
-          <div id="Export" onClick={exportSvg}>
+          <div id="Export" onClick={exportPNG}>
             <img src={exportIcon} alt="export" className="Export-Icon" />
           </div>
         </div>

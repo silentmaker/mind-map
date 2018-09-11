@@ -5,17 +5,12 @@
   right: 0;
   bottom: 0;
 }
-#links line {
-  stroke: #999;
-}
 
 .node rect {
-  pointer-events: all;
   cursor: move;
 }
 .node text {
   font-size: 14px;
-  fill: #fefefe;
   cursor: move;
 }
 
@@ -23,9 +18,6 @@
 .node .delete,
 .node .plus {
   opacity: 0;
-  fill: #fff;
-  stroke: #666;
-  stroke-width: 1px;
   transform: translate(0, 0);
   transition: all .3s ease-out;
   cursor: pointer;
