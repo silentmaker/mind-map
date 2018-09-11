@@ -85,9 +85,16 @@ class MindMap {
       })
       this.data.links.splice(linkTarget, 1)
       this.update()
+      this.save()
     } else {
       alert('Cannot Remove Root Node')
     }
+  }
+  clear() {
+    this.data.nodes = [{id: this.uid('node'), content: 'root', level: 0}]
+    this.data.links = []
+    this.update()
+    this.save()
   }
   update() {
     const {nodes, links} = this.data

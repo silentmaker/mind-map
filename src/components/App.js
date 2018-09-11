@@ -8,6 +8,7 @@ import '../styles/MindMap.css'
 import menuIcon from "../images/menu.svg";
 import closeIcon from "../images/close.svg";
 import exportIcon from "../images/export.png";
+import clearIcon from "../images/clear.svg";
 
 class App extends React.Component {
   constructor(props) {
@@ -15,6 +16,7 @@ class App extends React.Component {
 
     this.toggleMenu = this.toggleMenu.bind(this)
     this.exportPNG = this.exportPNG.bind(this)
+    this.clearAll = this.clearAll.bind(this)
     this.setPalette = this.setPalette.bind(this)
     this.colors = Object.keys(Palettes)
     this.mindMap = null
@@ -41,9 +43,12 @@ class App extends React.Component {
       isActive: !this.state.isActive
     })
   }
+  clearAll() {
+    if (window.confirm('Confirm to Clear Your Map?')) this.mindMap.clear()
+  }
   render() {
     const {isActive, palette} = this.state
-    const {colors, toggleMenu, setPalette, exportPNG} = this
+    const {colors, toggleMenu, setPalette, exportPNG, clearAll} = this
 
     return (
       <div id="App">
@@ -69,6 +74,9 @@ class App extends React.Component {
           </div>
           <div id="Export" onClick={exportPNG}>
             <img src={exportIcon} alt="export" className="Export-Icon" />
+          </div>
+          <div id="Clear" onClick={clearAll}>
+            <img src={clearIcon} alt="clear" className="Clear-Icon" />
           </div>
         </div>
       </div>

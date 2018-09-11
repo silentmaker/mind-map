@@ -29,16 +29,21 @@ ul {
   bottom: 0;
   background-color: rgba(0, 0, 0, .3);
 }
+#Clear,
 #Export {
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 24px;
+}
+#Clear {
+  right: 72px;
 }
 #Menu {
   position: absolute;
   top: 20px;
   right: -50px;
 }
+#Clear:hover,
 #Export:hover,
 #Menu:hover {
   cursor: pointer;
@@ -51,6 +56,9 @@ ul {
 }
 .Export-Icon {
   width: 26px;
+}
+.Clear-Icon {
+  width: 20px;
 }
 .Label {
   text-align: center;
