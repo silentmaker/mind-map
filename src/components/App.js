@@ -49,8 +49,9 @@ class App extends React.Component {
               <img src={closeIcon} alt="close" className="Close-Icon" /> :
               <img src={menuIcon} alt="menu" className="Menu-Icon" />
             }
-            <img src={exportIcon} alt="export" className="Export-Icon" 
-              onClick={this.exportSvg} />
+          </div>
+          <div id="Export" onClick={this.exportSvg}>
+            <img src={exportIcon} alt="export" className="Export-Icon" />
           </div>
         </div>
       </div>

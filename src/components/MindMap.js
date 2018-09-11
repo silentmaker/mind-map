@@ -61,18 +61,21 @@ class MindMap {
       this.save()
     }
   }
-  remove(data) {
-    const nodeIndex = this.data.nodes.findIndex(node => node.id === data.id)
-    const linkTarget = this.data.links.findIndex(link => link.target.id === data.id)
-    const newSource = this.data.links[linkTarget].source
+  remove(data, index) {
+    if (data.level > 0) {
+      const linkTarget = this.data.links.findIndex(link => link.target === data)
+      const newSource = this.data.links[linkTarget].source
 
-    this.data.nodes.splice(nodeIndex, 1)
-    this.data.links = this.data.links.map(link => {
-      if (link.source.id === data.id) link.source = newSource
-      return link
-    })
-    this.data.links.splice(linkTarget, 1)
-    this.update()
+      this.data.nodes.splice(index, 1)
+      this.data.links = this.data.links.map(link => {
+        if (link.source === data) link.source = newSource
+        return link
+      })
+      this.data.links.splice(linkTarget, 1)
+      this.update()
+    } else {
+      alert('Cannot Remove Root Node')
+    }
   }
   update() {
     const {nodes, links} = this.data
@@ -123,9 +126,9 @@ class MindMap {
       .attr('y', 8)
       .attr('width', 26)
       .attr('height', 26)
-      .on('click', (data) => {
+      .on('click', (data, index) => {
         D3.event.stopPropagation()
-        this.remove(data)
+        this.remove(data, index)
       })
     // Node Rect
     nodesDataEnter.append('rect')
@@ -144,6 +147,12 @@ class MindMap {
     nodesData.exit().remove()
     linesData = linesDataEnter.merge(linesData)
     nodesData = nodesDataEnter.merge(nodesData)
+    // Update Data
+    nodesData.select('rect')
+    nodesData.select('image')
+    nodesData.select('text')
+    nodesData.select('title')
+    linesData.select('line')
 
     const ticked = () => {
       linesData.attr('x1', data => Math.round(data.source.x + 60))

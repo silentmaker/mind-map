@@ -1,3 +1,6 @@
+img {
+  display: block;
+}
 #Sidebar {
   position: fixed;
   top: 0;
@@ -13,43 +16,23 @@
 }
 #Export {
   position: fixed;
-  top: 20px;
+  bottom: 20px;
   right: 20px;
-  padding: 0 20px;
-  height: 32px;
-  line-height: 32px;
-  background-color: #fff;
-  color: #666;
-  font-size: 14px;
-  cursor: pointer;
-  border: solid 1px #eee;
-  border-radius: 4px;
-}
-#Export:active {
-  background-color: #eee;
 }
 #Menu {
   position: absolute;
   top: 20px;
   right: -50px;
-  text-align: center;
 }
 #Menu:hover {
   cursor: pointer;
 }
-#Menu > img {
-  display: inline-block;
-}
 .Close-Icon {
-  width: 28px;
-}
-.Menu-Icon {
   width: 24px;
 }
+.Menu-Icon {
+  width: 22px;
+}
 .Export-Icon {
-  display: block;
-  position: fixed;
-  top: 20px;
-  right: 30px;
   width: 26px;
 }
