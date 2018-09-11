@@ -1,5 +1,12 @@
+body, ul {
+  margin: 0;
+  padding: 0;
+}
 img {
   display: block;
+}
+ul {
+  list-style: none;
 }
 #Sidebar {
   position: fixed;
@@ -35,4 +42,23 @@ img {
 }
 .Export-Icon {
   width: 26px;
+}
+.Label {
+  text-align: center;
+  font-size: 20px;
+  margin: 30px 0 20px;
+  color: #ccc;
+}
+#Palette {
+  display: flex;
+  justify-content: space-evenly;
+}
+#Palette li {
+  flex: 0 0 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+#Palette li.Current {
+  border-radius: 0;
 }

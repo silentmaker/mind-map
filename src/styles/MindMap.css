@@ -10,13 +10,12 @@
 }
 
 .node rect {
-  fill: #eee;
   pointer-events: all;
   cursor: move;
 }
 .node text {
   font-size: 14px;
-  fill: #333;
+  fill: #fefefe;
   cursor: move;
 }
 

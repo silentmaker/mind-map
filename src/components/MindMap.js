@@ -1,4 +1,6 @@
 import * as D3 from 'd3'
+import Palettes from './Palettes'
+
 import plusImage from '../images/plus.svg'
 import editImage from '../images/edit.svg'
 import deleteImage from '../images/delete.svg'
@@ -21,11 +23,12 @@ class MindMap {
     this.svg = container.select('svg')
     this.simulation = D3.forceSimulation()
       .force("link", D3.forceLink().distance(140).id(data => data.id))
-      .force('charge', D3.forceManyBody().strength(0))
+      .force('charge', D3.forceManyBody().strength(-120))
       .force('center', D3.forceCenter(this.width/2 - 50, this.height/2 - 20))
       .force('collide', D3.forceCollide().radius(60))
     this.linesGroup = this.svg.append("g").attr("id", "links")
     this.nodesGroup = this.svg.append('g').attr("id", "nodes")
+    this.palette = Palettes.Blue
     this.update()
   }
   dragStart(data, simulation) {
@@ -41,6 +44,10 @@ class MindMap {
     if (!D3.event.active) simulation.alphaTarget(0);
     data.fx = null;
     data.fy = null;
+  }
+  setPalette(palette) {
+    this.palette = palette
+    this.update()
   }
   add(data) {
     const content = window.prompt('Add Node')
@@ -160,6 +167,7 @@ class MindMap {
         .attr('x2', data => Math.round(data.target.x + 60))
         .attr('y2', data => Math.round(data.target.y + 20))
       nodesData.attr('transform', data => `translate(${Math.round(data.x)}, ${Math.round(data.y)})`)
+      nodesData.selectAll('rect').attr('fill', d => 6 - d.level < 0 ? this.palette[0] : this.palette[6 - d.level])
       nodesData.selectAll('title').text(data => data.content)
       nodesData.selectAll('text').each(function(data) {
         const el = D3.select(this)

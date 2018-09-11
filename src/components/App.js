@@ -1,5 +1,6 @@
 import React from 'react'
 import MindMap from './MindMap'
+import Palettes from './Palettes'
 
 import '../styles/App.css'
 import '../styles/MindMap.css'
@@ -14,14 +15,27 @@ class App extends React.Component {
 
     this.toggleMenu = this.toggleMenu.bind(this)
     this.exportSvg = this.exportSvg.bind(this)
+    this.setPalette = this.setPalette.bind(this)
+    this.colors = Object.keys(Palettes)
     
     this.state = {
+      palette: this.colors[0],
       isActive: false,
+      mindMap: null,
     }
   }
   componentDidMount() {
-    const mindMap = new MindMap('#MindMap')
-    window.mindMap = mindMap
+    this.setState({
+      mindMap: new MindMap('#MindMap')
+    })
+  }
+  setPalette(color) {
+    this.setState({
+      palette: color
+    }, () => {
+      console.log(Palettes[color])
+      this.state.mindMap.setPalette(Palettes[color])
+    })
   }
   toggleMenu() {
     this.setState({
@@ -39,18 +53,29 @@ class App extends React.Component {
     downloadLink.click();
   }
   render() {
-    const {isActive} = this.state
+    const {isActive, palette} = this.state
+    const {colors, toggleMenu, exportSvg, setPalette} = this
+
     return (
       <div id="App">
         <div id="MindMap"></div>
         <div id="Sidebar" className={isActive ? 'Active' : ''}>
-          <div id="Menu" onClick={this.toggleMenu}>
+          <div className="Label">Palette</div>
+          <ul id="Palette">
+            {colors.map(color => 
+              <li key={color} className={palette === color ? 'Current' : ''} 
+                style={{backgroundColor: Palettes[color][0]}}
+                onClick={() => setPalette(color)}>
+              </li>
+            )}
+          </ul>
+          <div id="Menu" onClick={toggleMenu}>
             {isActive ?
               <img src={closeIcon} alt="close" className="Close-Icon" /> :
               <img src={menuIcon} alt="menu" className="Menu-Icon" />
             }
           </div>
-          <div id="Export" onClick={this.exportSvg}>
+          <div id="Export" onClick={exportSvg}>
             <img src={exportIcon} alt="export" className="Export-Icon" />
           </div>
         </div>
