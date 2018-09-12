@@ -77,7 +77,7 @@ class MindMap {
     if (node.level > 0) {
       const linkTarget = this.data.links.findIndex(link => link.target.id === node.id)
       const newSource = this.data.links[linkTarget].source
-console.log(node)
+
       this.data.nodes.splice(index, 1)
       this.data.links = this.data.links.map(link => {
         if (link.source.id === node.id) link.source = newSource
@@ -169,9 +169,9 @@ console.log(node)
     nodesData = nodesDataEnter.merge(nodesData)
     // Update Data
     nodesData.select('g')
-    nodesData.select('.delete')
+    nodesData.select('.plus')
     nodesData.select('.edit')
-    nodesData.select('.remove')
+    nodesData.select('.delete')
     nodesData.select('rect')
     nodesData.select('text')
     nodesData.select('title')
