@@ -80,7 +80,10 @@ class MindMap {
 
       this.data.nodes.splice(index, 1)
       this.data.links = this.data.links.map(link => {
-        if (link.source.id === node.id) link.source = newSource
+        if (link.source.id === node.id) {
+          link.target.level = node.level
+          link.source = newSource
+        }
         return link
       })
       this.data.links.splice(linkTarget, 1)
